@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     marginRight: 30,
     marginLeft: 30,
     padding: 30,
-    marginBottom: 200,
+   marginTop: 30,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.8)",

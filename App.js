@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   ImageBackground,
@@ -11,20 +11,19 @@ import {
 } from "react-native";
 import * as Speech from "expo-speech";
 import { styles } from "./styles";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 export default function App() {
-  const [word, setWord] = React.useState("");
-  const [checkedWord, setCheckedWord] = React.useState("");
-  const [definition, setDefinition] = React.useState("");
-  const [phonetic, setPhonetic] = React.useState("");
-  const [kind, setKind] = React.useState("");
-  const [example, setExample] = React.useState("");
+  const [word, setWord] = useState("");
+  const [results, setResults] = useState([]);
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const searchWord = (getWord) => {
     setWord(getWord);
     console.log(getWord);
   };
 
-  requestAPI = () => {
+  const requestAPI = () => {
     var url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word;
 
     fetch(url)
@@ -32,99 +31,105 @@ export default function App() {
         return data.json();
       })
       .then((response) => {
-        var word = response[0].word;
-        setCheckedWord(word);
-
-        var definition = response[0].meanings[0].definitions[0].definition;
-        setDefinition(definition);
-
-        var phonetic = response[0].phonetic;
-        setPhonetic(phonetic);
-
-        var kind = response[0].meanings[0].partOfSpeech;
-        setKind(kind);
-        console.log(kind);
-
-        var example = response[0].meanings[1].definitions[1].example;
-        setExample(example);
-        console.log("example",example);
-
+        setResults(response.slice(0, 5)); // Save up to the first 5 results in state
+        setExpandedIndex(null); // Reset expanded index
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  const speak = () => {
-    Speech.speak(checkedWord);
+
+  const speak = (wordToSpeak) => {
+    Speech.speak(wordToSpeak);
   };
+
   const clear = () => {
     setWord("");
-    setCheckedWord("");
-    setDefinition("");
-    setPhonetic("");
-    setKind("");
-    setExample("");
+    setResults([]);
+    setExpandedIndex(null); // Reset expanded index
+  };
+
+  const toggleAccordion = (index) => {
+    setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={styles.backgroundImage}
-        resizeMode="cover"
-        source={require("./assets/bg.jpg")}
-      >
-        <View style={styles.contentContainer}>
-          <TouchableOpacity onPress={() => speak()}>
-            <Image
-              source={require("./assets/voice.png")}
-              style={{
-                width: 30,
-                height: 30,
-                marginTop: 220,
-                marginLeft: 8,
-                marginRight: 18,
-              }}
+    <KeyboardAwareScrollView
+      style={{ flex: 1, width: "100%" }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={styles.container}
+      scrollEnabled={false}
+    >
+      <View style={styles.container}>
+        <ImageBackground
+          style={styles.backgroundImage}
+          resizeMode="cover"
+          source={require("./assets/bg.jpg")}
+        >
+          <View style={styles.contentContainer}>
+            <TouchableOpacity onPress={() => speak(results[0]?.word)}>
+              <Image
+                source={require("./assets/voice.png")}
+                style={{
+                  width: 30,
+                  height: 30,
+                  marginTop: 220,
+                  marginLeft: 8,
+                  marginRight: 18,
+                }}
+              />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter a word"
+              textAlign="center"
+              clearButtonMode="always"
+              onChangeText={searchWord}
+              value={word}
             />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter a word"
-            textAlign="center"
-            clearButtonMode="always"
-            onChangeText={searchWord}
-            value={word}
-          />
-          <TouchableOpacity
-            style={styles.searchIconContainer}
-            onPress={requestAPI}
-          >
-            <Image
-              source={require("./assets/search.png")}
-              style={styles.searchIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.trashIconContainer}
-            onPress={() => {
-              clear();
-            }}
-          >
-            <Image
-              source={require("./assets/trash.png")}
-              style={styles.trashIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.results}>
-          <Text style={styles.text}>{checkedWord}         {phonetic}</Text>
-          <Text style={styles.text2}>{kind}</Text>
-          <Text style={styles.text}>{definition}</Text>
-          <Text style={styles.text}>- {example}</Text>
+            <TouchableOpacity
+              style={styles.searchIconContainer}
+              onPress={requestAPI}
+            >
+              <Image
+                source={require("./assets/search.png")}
+                style={styles.searchIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.trashIconContainer} onPress={clear}>
+              <Image
+                source={require("./assets/trash.png")}
+                style={styles.trashIcon}
+              />
+            </TouchableOpacity>
+          </View>
+          {results.map((result, index) => (
+            <View style={styles.results} key={`result${index}`}>
+              <TouchableOpacity onPress={() => toggleAccordion(index)}>
+                <Text style={styles.text}>
+                  {result.meanings[0]?.partOfSpeech}
+                </Text>
+              </TouchableOpacity>
+              {expandedIndex === index && (
+                <>
+                  <Text style={styles.text2}>
+                    {result.meanings[0]?.partOfSpeech}
+                  </Text>
+                  <Text style={styles.text}>
+                    {result.meanings[0]?.definitions[0]?.definition}
+                  </Text>
+                  <Text style={styles.text}>
+  <Text style={{ fontWeight: "bold", color: "red" }}>Example:</Text>{" "}
+  {result.meanings[0]?.definitions[1]?.example || "Not found"}
+</Text>
 
-        </View>
-      </ImageBackground>
-      <StatusBar style="auto" />
-    </View>
+                </>
+              )}
+            </View>
+          ))}
+        </ImageBackground>
+        <StatusBar style="auto" />
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
-
