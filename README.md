@@ -45,7 +45,7 @@ Follow these steps to get started with the Wordland Dictionary App:
 
 Feel free to explore the application and contribute to its development! 🚀👩‍💻
 
-# Interfaces of App 🖥️
+# Interface of App 🖥️
 
 ![1](https://github.com/zahidedusgun/ReactNative-DictionaryApp/assets/98893927/34a1d13a-8806-4efc-ab85-ffe642cdb369)
 
