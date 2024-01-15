@@ -31,8 +31,10 @@ export default function App() {
         return data.json();
       })
       .then((response) => {
-        setResults(response.slice(0, 5)); // Save up to the first 5 results in state
-        setExpandedIndex(null); // Reset expanded index
+        console.log(response);
+        setResults(response.slice(0, 5)); 
+        console.log(response);
+        setExpandedIndex(null); 
       })
       .catch((error) => {
         console.log(error);
@@ -106,23 +108,39 @@ export default function App() {
           {results.map((result, index) => (
             <View style={styles.results} key={`result${index}`}>
               <TouchableOpacity onPress={() => toggleAccordion(index)}>
-                <Text style={styles.text}>
-                  {result.meanings[0]?.partOfSpeech}
-                </Text>
+              <Text style={{ ...styles.text, fontWeight: 'bold', color: '#D14043', marginBottom:2 }}>
+  {result.meanings[0]?.partOfSpeech}
+</Text>
+
               </TouchableOpacity>
               {expandedIndex === index && (
                 <>
-                  <Text style={styles.text2}>
-                    {result.meanings[0]?.partOfSpeech}
+                  <Text style={styles.text}>
+                    {result.phonetic}
                   </Text>
                   <Text style={styles.text}>
                     {result.meanings[0]?.definitions[0]?.definition}
                   </Text>
                   <Text style={styles.text}>
-  <Text style={{ fontWeight: "bold", color: "red" }}>Example:</Text>{" "}
-  {result.meanings[0]?.definitions[1]?.example || "Not found"}
-</Text>
-
+                    <Text style={{ fontWeight: "bold", color: "#D14043" }}>
+                      Example:
+                    </Text>{" "}
+                    {result.meanings[0]?.definitions[0]?.example || "Not found"}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={{ fontWeight: "bold", color: "#D14043" }}>
+                      Synonyms:
+                    </Text>{" "}
+                    {result.meanings[0]?.synonyms.slice(0, 5).join(", ") ||
+                      "Not found"}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={{ fontWeight: "bold", color: "#D14043" }}>
+                      Antonyms:
+                    </Text>{" "}
+                    {result.meanings[0]?.antonyms.slice(0, 5).join(", ") ||
+                      "Not found"}
+                  </Text>
                 </>
               )}
             </View>

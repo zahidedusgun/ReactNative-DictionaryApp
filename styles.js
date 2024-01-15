@@ -64,15 +64,17 @@ export const styles = StyleSheet.create({
     height: 20,
   },
   results: {
-    marginRight: 30,
-    marginLeft: 30,
-    padding: 30,
-   marginTop: 30,
+   
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.8)",
     borderRadius: 20,
+    padding: 30,
+    marginTop: 30,
+    marginBottom:50,
+    marginHorizontal: 30, // Using marginHorizontal for both marginRight and marginLeft
   },
+    
   text: {
     fontSize: 20,
     color: "white",
