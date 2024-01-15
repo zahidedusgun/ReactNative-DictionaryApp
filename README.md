@@ -27,3 +27,25 @@ This React Native-based mobile application aims to address current challenges in
 
 - **Canva:** An online design platform used for creating and editing graphic design projects.
 
+
+# How to Use 📖
+
+Follow these steps to get started with the Wordland Dictionary App:
+
+1. **Clone the Repository:**
+    ```bash
+    git clone https://github.com/your-username/Wordland-Dictionary-App.git
+    ```
+
+2. **Open the Project:**
+    Open the project in Visual Studio Code or your preferred Integrated Development Environment (IDE).
+
+3. **Run the Project:**
+    Run the project on your mobile phone or emulator using Expo Go.
+
+Feel free to explore the application and contribute to its development! 🚀👩‍💻
+
+# Interfaces of App 🖥️
+
+![1](https://github.com/zahidedusgun/ReactNative-DictionaryApp/assets/98893927/34a1d13a-8806-4efc-ab85-ffe642cdb369)
+
